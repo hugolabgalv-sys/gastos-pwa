@@ -1,0 +1,25 @@
+{
+  "name": "Gestao Financeira",
+  "short_name": "Gastos",
+  "description": "Captura rapida de gastos no momento da compra",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F0E6",
+  "theme_color": "#3D5A40",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"]
+}

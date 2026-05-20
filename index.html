@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#3D5A40">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Gastos">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>Gastos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F0E6;
+  --bg-card: #FDFAF4;
+  --bg-soft: #EBE3D3;
+  --ink: #1F1B16;
+  --ink-soft: #5B544A;
+  --ink-faint: #8C8478;
+  --rule: #D9D0BD;
+  --accent: #3D5A40;
+  --accent-light: #6B8E6F;
+  --warn: #B86F3B;
+  --alarm: #8B2E2E;
+  --gold: #A48430;
+  --sh: 0 1px 3px rgba(31,27,22,0.08);
+  --sh-lg: 0 4px 12px rgba(31,27,22,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.display { font-family: 'Fraunces', Georgia, serif; font-weight: 500; letter-spacing: -0.02em; }
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+/* Layout principal */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.header {
+  padding: 14px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header h1 { font-family: 'Fraunces'; font-weight: 500; font-size: 20px; letter-spacing: -0.02em; }
+.header .sync-status { font-size: 11px; color: var(--ink-faint); display: flex; align-items: center; gap: 6px; }
+.header .sync-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-faint); }
+.header .sync-status .dot.ok { background: var(--accent); }
+.header .sync-status .dot.warn { background: var(--warn); }
+.header .sync-status .dot.alarm { background: var(--alarm); }
+
+/* Conteudo */
+.content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* TELA LANCAR */
+.field { margin-bottom: 20px; }
+.field-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 8px; font-weight: 600; }
+
+/* Valor */
+.valor-input-wrap {
+  display: flex; align-items: baseline; gap: 8px;
+  background: var(--bg-card); padding: 16px; border-radius: 8px;
+  border: 2px solid var(--rule); transition: border-color 0.2s;
+}
+.valor-input-wrap:focus-within { border-color: var(--accent); }
+.valor-input-wrap select {
+  background: transparent; border: none; font-family: 'Fraunces'; font-weight: 500;
+  font-size: 22px; color: var(--ink-soft); padding: 0 4px; outline: none;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='%235B544A' stroke-width='1.5' fill='none'/></svg>");
+  background-repeat: no-repeat; background-position: right 0 center; padding-right: 14px;
+  cursor: pointer;
+}
+.valor-input-wrap input {
+  flex: 1; background: transparent; border: none; font-family: 'Fraunces';
+  font-weight: 500; font-size: 32px; color: var(--ink); outline: none;
+  text-align: right; min-width: 0;
+}
+.valor-cambio {
+  font-size: 12px; color: var(--ink-faint); text-align: right;
+  margin-top: 6px; font-family: 'JetBrains Mono'; min-height: 16px;
+}
+
+/* Item input */
+.input-text {
+  width: 100%; background: var(--bg-card); padding: 14px 16px; border-radius: 8px;
+  border: 2px solid var(--rule); font-family: 'Inter'; font-size: 16px;
+  color: var(--ink); outline: none; transition: border-color 0.2s;
+}
+.input-text:focus { border-color: var(--accent); }
+
+.autocomplete {
+  position: relative;
+}
+.autocomplete-list {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
+  background: var(--bg-card); border: 1px solid var(--rule); border-top: none;
+  border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto;
+  box-shadow: var(--sh-lg); display: none;
+}
+.autocomplete-list.show { display: block; }
+.autocomplete-item {
+  padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:active { background: var(--bg-soft); }
+.autocomplete-item .nome { font-size: 14px; color: var(--ink); }
+.autocomplete-item .cat { font-size: 11px; color: var(--ink-faint); background: var(--bg-soft); padding: 2px 8px; border-radius: 10px; }
+
+/* Categorias grid */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.cat-btn {
+  padding: 14px 8px; background: var(--bg-card); border: 2px solid var(--rule);
+  border-radius: 8px; font-family: 'Inter'; font-size: 13px; color: var(--ink-soft);
+  cursor: pointer; text-align: center; transition: all 0.15s;
+  font-weight: 500; line-height: 1.2; min-height: 56px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cat-btn:active { transform: scale(0.95); }
+.cat-btn.selected {
+  background: var(--accent); border-color: var(--accent); color: white;
+  box-shadow: var(--sh);
+}
+
+/* Metodo (chips) */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  padding: 10px 16px; background: var(--bg-card); border: 2px solid var(--rule);
+  border-radius: 20px; font-size: 13px; color: var(--ink-soft); cursor: pointer;
+  font-weight: 500; transition: all 0.15s;
+}
+.chip:active { transform: scale(0.95); }
+.chip.selected {
+  background: var(--ink); border-color: var(--ink); color: white;
+}
+
+/* Data */
+.data-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: var(--bg-card); border: 2px solid var(--rule); border-radius: 8px;
+}
+.data-row .data-info { flex: 1; }
+.data-row .data-info .dia { font-family: 'Fraunces'; font-weight: 500; font-size: 16px; }
+.data-row .data-info .sub { font-size: 11px; color: var(--ink-faint); }
+.data-row input[type="date"] {
+  background: transparent; border: none; font-family: 'Inter'; font-size: 14px;
+  color: var(--accent); cursor: pointer; padding: 8px;
+}
+.data-row .edit-btn {
+  background: var(--bg-soft); border: none; padding: 8px 14px; border-radius: 6px;
+  font-size: 13px; color: var(--ink); cursor: pointer; font-weight: 500;
+}
+
+/* Botao Salvar */
+.save-btn {
+  width: 100%; padding: 18px; background: var(--accent); color: white;
+  border: none; border-radius: 8px; font-family: 'Fraunces'; font-weight: 500;
+  font-size: 18px; cursor: pointer; margin-top: 24px;
+  box-shadow: var(--sh); transition: all 0.15s; letter-spacing: 0.02em;
+}
+.save-btn:active { transform: scale(0.98); box-shadow: none; }
+.save-btn:disabled { background: var(--ink-faint); cursor: not-allowed; }
+
+/* TELA HISTORICO */
+.totals {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+}
+.total-card {
+  background: var(--bg-card); padding: 14px; border-radius: 8px;
+  border: 1px solid var(--rule);
+}
+.total-card .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 4px; font-weight: 600; }
+.total-card .val { font-family: 'Fraunces'; font-weight: 500; font-size: 20px; }
+.total-card .sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; font-family: 'JetBrains Mono'; }
+
+.lanc-group { margin-bottom: 20px; }
+.lanc-group-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 8px 0; margin-bottom: 8px; border-bottom: 1px solid var(--rule);
+}
+.lanc-group-header .data { font-family: 'Fraunces'; font-weight: 500; font-size: 14px; }
+.lanc-group-header .total { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--ink-soft); }
+
+.lanc-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px; background: var(--bg-card); border-radius: 8px; margin-bottom: 6px;
+  border: 1px solid transparent;
+}
+.lanc-item.pendente { border-color: var(--warn); }
+.lanc-item .info { flex: 1; min-width: 0; }
+.lanc-item .item { font-size: 14px; font-weight: 500; }
+.lanc-item .meta { font-size: 11px; color: var(--ink-faint); margin-top: 2px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.lanc-item .meta .cat-tag { background: var(--bg-soft); padding: 1px 6px; border-radius: 8px; }
+.lanc-item .valor { font-family: 'JetBrains Mono'; font-weight: 500; font-size: 14px; text-align: right; flex-shrink: 0; padding-left: 12px; }
+.lanc-item .valor .moeda { font-size: 10px; color: var(--ink-faint); }
+
+.empty {
+  text-align: center; padding: 40px 20px; color: var(--ink-faint);
+}
+.empty .display { font-size: 18px; margin-bottom: 8px; }
+.empty .sub { font-size: 13px; }
+
+/* TELA AJUSTES */
+.section-block { background: var(--bg-card); border-radius: 8px; padding: 18px; margin-bottom: 16px; border: 1px solid var(--rule); }
+.section-block h2 { font-family: 'Fraunces'; font-weight: 500; font-size: 16px; margin-bottom: 12px; }
+.section-block p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 12px; }
+.section-block .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.section-block .row:last-child { border-bottom: none; }
+.section-block .row .lbl { color: var(--ink-soft); }
+.section-block .row .val { font-family: 'JetBrains Mono'; font-weight: 500; }
+
+.btn {
+  width: 100%; padding: 14px; background: var(--ink); color: white;
+  border: none; border-radius: 8px; font-family: 'Inter'; font-weight: 500;
+  font-size: 15px; cursor: pointer; margin-bottom: 8px;
+}
+.btn:active { opacity: 0.85; }
+.btn.secondary { background: var(--bg-soft); color: var(--ink); }
+.btn.danger { background: var(--alarm); }
+.btn.accent { background: var(--accent); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Navegacao inferior */
+.nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-card); border-top: 1px solid var(--rule);
+  display: flex; padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+  z-index: 20;
+}
+.nav-btn {
+  flex: 1; background: transparent; border: none; padding: 10px 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-family: 'Inter'; font-size: 11px; color: var(--ink-faint); cursor: pointer;
+}
+.nav-btn.active { color: var(--accent); }
+.nav-btn .ic { font-size: 22px; line-height: 1; }
+.nav-btn .lbl { font-weight: 500; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 90px; left: 20px; right: 20px;
+  background: var(--ink); color: white; padding: 14px 18px;
+  border-radius: 8px; font-size: 14px; box-shadow: var(--sh-lg);
+  z-index: 30; opacity: 0; transform: translateY(20px);
+  transition: all 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: var(--accent); }
+.toast.error { background: var(--alarm); }
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(31,27,22,0.6);
+  z-index: 100; display: none; align-items: flex-end; justify-content: center;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: var(--bg); width: 100%; max-width: 480px; border-radius: 16px 16px 0 0;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  max-height: 80vh; overflow-y: auto;
+}
+.modal h2 { font-family: 'Fraunces'; font-weight: 500; font-size: 20px; margin-bottom: 16px; }
+.modal .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+
+/* Cambio info */
+.cambio-info {
+  background: var(--bg-soft); padding: 8px 12px; border-radius: 6px;
+  font-size: 11px; color: var(--ink-soft); margin-top: 8px;
+  font-family: 'JetBrains Mono';
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1 class="display">Gastos</h1>
+    <div class="sync-status" id="sync-status">
+      <span class="dot" id="sync-dot"></span>
+      <span id="sync-text">offline</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- TELA LANCAR -->
+    <div class="screen active" id="screen-lancar">
+
+      <div class="field">
+        <div class="field-label">Quanto?</div>
+        <div class="valor-input-wrap">
+          <select id="moeda">
+            <option value="BRL">R$</option>
+            <option value="USD">US$</option>
+            <option value="EUR">€</option>
+            <option value="GBP">£</option>
+          </select>
+          <input type="number" inputmode="decimal" id="valor" placeholder="0,00" step="0.01">
+        </div>
+        <div class="valor-cambio" id="cambio-preview"></div>
+      </div>
+
+      <div class="field autocomplete">
+        <div class="field-label">O que foi?</div>
+        <input type="text" class="input-text" id="item" placeholder="Estabelecimento ou descricao" autocomplete="off">
+        <div class="autocomplete-list" id="ac-list"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Categoria</div>
+        <div class="cat-grid" id="cat-grid"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Metodo de pagamento</div>
+        <div class="chips" id="metodo-chips">
+          <div class="chip selected" data-met="CC Bradesco">CC Bradesco</div>
+          <div class="chip" data-met="Pix">Pix</div>
+          <div class="chip" data-met="Ticket Refeicao">TR</div>
+          <div class="chip" data-met="Outros">Outros</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Data</div>
+        <div class="data-row">
+          <div class="data-info">
+            <div class="dia" id="data-display">Hoje</div>
+            <div class="sub" id="data-sub"></div>
+          </div>
+          <input type="date" id="data" style="display: none;">
+          <button class="edit-btn" id="data-edit">editar</button>
+        </div>
+      </div>
+
+      <button class="save-btn" id="btn-salvar">Salvar</button>
+
+    </div>
+
+    <!-- TELA HISTORICO -->
+    <div class="screen" id="screen-historico">
+      <div class="totals">
+        <div class="total-card">
+          <div class="lbl">Hoje</div>
+          <div class="val" id="total-hoje">R$ 0,00</div>
+          <div class="sub" id="qtd-hoje">0 lancamentos</div>
+        </div>
+        <div class="total-card">
+          <div class="lbl">Esta semana</div>
+          <div class="val" id="total-semana">R$ 0,00</div>
+          <div class="sub" id="qtd-semana">0 lancamentos</div>
+        </div>
+      </div>
+      <div id="lista-lancamentos"></div>
+    </div>
+
+    <!-- TELA AJUSTES -->
+    <div class="screen" id="screen-ajustes">
+
+      <div class="section-block">
+        <h2>Sincronizacao</h2>
+        <p>Lancamentos sao salvos no celular. Sincronize com o Google Drive para que o dashboard no PC os receba.</p>
+        <div class="row"><span class="lbl">Total no celular</span><span class="val" id="cfg-total">0</span></div>
+        <div class="row"><span class="lbl">Aguardando sync</span><span class="val" id="cfg-pendentes">0</span></div>
+        <div class="row"><span class="lbl">Ultima sync</span><span class="val" id="cfg-ultima">nunca</span></div>
+        <button class="btn accent" id="btn-conectar-drive" style="margin-top: 12px;">Conectar Google Drive</button>
+        <button class="btn" id="btn-sync" disabled>Sincronizar agora</button>
+        <button class="btn secondary" id="btn-exportar">Exportar CSV (manual)</button>
+      </div>
+
+      <div class="section-block">
+        <h2>Cambio atual</h2>
+        <p>Usado para preview de gastos em moeda estrangeira. Atualiza ao abrir o app com internet.</p>
+        <div id="lista-cambio"></div>
+        <button class="btn secondary" id="btn-atualizar-cambio" style="margin-top: 8px;">Atualizar cambio</button>
+      </div>
+
+      <div class="section-block">
+        <h2>Auto-complete</h2>
+        <p>Itens conhecidos para sugestao automatica. Adicione um novo entrando manualmente; o sistema aprende.</p>
+        <div class="row"><span class="lbl">Itens pre-cadastrados</span><span class="val" id="cfg-itens-pre">0</span></div>
+        <div class="row"><span class="lbl">Itens aprendidos</span><span class="val" id="cfg-itens-apr">0</span></div>
+        <button class="btn secondary" id="btn-limpar-aprendidos">Limpar aprendidos</button>
+      </div>
+
+      <div class="section-block">
+        <h2>Sobre</h2>
+        <p style="margin-bottom: 4px;">Gastos PWA v1.0</p>
+        <p style="font-size: 11px; opacity: 0.7;">Captura rapida de gastos para o dashboard de gestao financeira.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Navegacao -->
+  <div class="nav">
+    <button class="nav-btn active" data-screen="lancar">
+      <span class="ic">+</span>
+      <span class="lbl">Lancar</span>
+    </button>
+    <button class="nav-btn" data-screen="historico">
+      <span class="ic">≡</span>
+      <span class="lbl">Historico</span>
+    </button>
+    <button class="nav-btn" data-screen="ajustes">
+      <span class="ic">⚙</span>
+      <span class="lbl">Ajustes</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Modal de "Mais categorias" (futuro) -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+// =============== CONFIG ===============
+const CATEGORIAS = [
+  'Casa', 'Estacionamento', 'Presente',
+  'Lazer', 'Farmacia', 'Automovel',
+  'Educacao', 'Saida de Casa', 'Saude',
+  'Supermercado e Padaria', 'Vestuario', 'Viagem',
+  'Extra', 'Diversos'
+];
+
+// Categorias com nome amigavel curto (pra caber no botao)
+const CAT_LABEL = {
+  'Casa': 'Casa',
+  'Estacionamento': 'Estacion.',
+  'Presente': 'Presente',
+  'Lazer': 'Lazer',
+  'Farmacia': 'Farmacia',
+  'Automovel': 'Automovel',
+  'Educacao': 'Educacao',
+  'Saida de Casa': 'Saida',
+  'Saude': 'Saude',
+  'Supermercado e Padaria': 'Super',
+  'Vestuario': 'Vestuario',
+  'Viagem': 'Viagem',
+  'Extra': 'Extra',
+  'Diversos': 'Diversos',
+};
+
+// Itens pre-cadastrados (baseado na fatura real do usuario)
+const ITENS_PRE = [
+  {q:'Madero', cat:'Saida de Casa'}, {q:'Caprese', cat:'Saida de Casa'},
+  {q:'Hacienda 1979', cat:'Saida de Casa'}, {q:'Villagium', cat:'Saida de Casa'},
+  {q:'Jeronimo Burger', cat:'Saida de Casa'}, {q:'Carapreta', cat:'Saida de Casa'},
+  {q:'Pobre Juan', cat:'Saida de Casa'}, {q:'Pizza Pazza', cat:'Saida de Casa'},
+  {q:'Cacau Show', cat:'Saida de Casa'},
+  {q:'Supermercado BH', cat:'Supermercado e Padaria'},
+  {q:'Super Lun', cat:'Supermercado e Padaria'},
+  {q:'Jamal', cat:'Supermercado e Padaria'},
+  {q:'SN Eldorado', cat:'Supermercado e Padaria'},
+  {q:'Emporio Almeida', cat:'Supermercado e Padaria'},
+  {q:'Bolo na Hora', cat:'Supermercado e Padaria'},
+  {q:'Posto Norte Sul', cat:'Automovel'}, {q:'Posto SJ Gas', cat:'Automovel'},
+  {q:'Sem Parar', cat:'Automovel'},
+  {q:'Cinemark BH Shopping', cat:'Lazer'}, {q:'Cinemark Diamond', cat:'Lazer'},
+  {q:'Pampulha Iate Clube', cat:'Lazer'},
+  {q:'Estacionamento Shopping', cat:'Estacionamento'},
+  {q:'Drogaria Araujo', cat:'Farmacia'}, {q:'Drogarias Pacheco', cat:'Farmacia'},
+  {q:'Raia Drogasil', cat:'Farmacia'}, {q:'Farmacia Artesanal', cat:'Farmacia'},
+  {q:'Hospital Mater Dei', cat:'Saude'}, {q:'Grupo Zelo', cat:'Saude'},
+  {q:'Barbearia', cat:'Saude'},
+  {q:'Centauro', cat:'Vestuario'}, {q:'Hering Store', cat:'Vestuario'},
+  {q:'Number One', cat:'Vestuario'}, {q:'Sapatop', cat:'Vestuario'},
+  {q:'Uber', cat:'Extra'},
+  {q:'Netflix', cat:'Diversos'}, {q:'Spotify', cat:'Diversos'},
+  {q:'Disney Plus', cat:'Diversos'}, {q:'Amazon Prime', cat:'Diversos'},
+  {q:'OpenAI', cat:'Diversos'}, {q:'Claude.ai', cat:'Diversos'},
+  {q:'Anthropic', cat:'Diversos'}, {q:'Make.com', cat:'Diversos'},
+];
+
+// Google Drive config (configurar no setup)
+const DRIVE_CONFIG = {
+  // CLIENT_ID sera setado pelo usuario via tela de ajustes
+  CLIENT_ID: localStorage.getItem('drive_client_id') || '',
+  SCOPE: 'https://www.googleapis.com/auth/drive.file',
+  FILE_NAME: 'lancamentos_manuais.csv',
+};
+
+// =============== ESTADO ===============
+let estado = {
+  valor: '',
+  moeda: 'BRL',
+  item: '',
+  categoria: null,
+  metodo: 'CC Bradesco',
+  data: new Date().toISOString().split('T')[0],
+  cambio: { USD: 5.45, EUR: 5.85, GBP: 6.75, atualizado: null }, // fallback
+  driveToken: null,
+};
+
+let lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+let itensAprendidos = JSON.parse(localStorage.getItem('itens_aprendidos') || '[]');
+const cambioCache = JSON.parse(localStorage.getItem('cambio') || 'null');
+if (cambioCache) estado.cambio = cambioCache;
+
+// =============== UTIL ===============
+const fmt = v => 'R$ ' + (v || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const fmtMoeda = (v, m) => {
+  const simb = {BRL: 'R$', USD: 'US$', EUR: '€', GBP: '£'}[m] || m;
+  return `${simb} ${(v||0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+};
+
+function toast(msg, tipo = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + tipo;
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function uuid() {
+  return 'l-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+}
+
+function salvarLancamentos() { localStorage.setItem('lancamentos', JSON.stringify(lancamentos)); }
+function salvarAprendidos() { localStorage.setItem('itens_aprendidos', JSON.stringify(itensAprendidos)); }
+
+// =============== INICIALIZACAO ===============
+function init() {
+  renderCategorias();
+  setupEventos();
+  atualizarDataDisplay();
+  buscarCambio(); // tenta atualizar cambio em background
+  renderHistorico();
+  renderAjustes();
+  atualizarSyncStatus();
+
+  // Registra service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW falhou:', e));
+  }
+}
+
+function renderCategorias() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = CATEGORIAS.map(c => `<button class="cat-btn" data-cat="${c}">${CAT_LABEL[c] || c}</button>`).join('');
+}
+
+function atualizarDataDisplay() {
+  const hoje = new Date().toISOString().split('T')[0];
+  const d = new Date(estado.data + 'T12:00:00');
+  const dispD = document.getElementById('data-display');
+  const dispS = document.getElementById('data-sub');
+  if (estado.data === hoje) {
+    dispD.textContent = 'Hoje';
+    dispS.textContent = d.toLocaleDateString('pt-BR', {weekday: 'long', day: '2-digit', month: 'long'});
+  } else {
+    dispD.textContent = d.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric'});
+    dispS.textContent = d.toLocaleDateString('pt-BR', {weekday: 'long'});
+  }
+}
+
+function atualizarCambioPreview() {
+  const div = document.getElementById('cambio-preview');
+  const v = parseFloat(estado.valor) || 0;
+  if (estado.moeda === 'BRL' || !v) { div.textContent = ''; return; }
+  const taxa = estado.cambio[estado.moeda];
+  if (!taxa) { div.textContent = ''; return; }
+  const brl = v * taxa;
+  div.textContent = `≈ ${fmt(brl)} (cambio ${taxa.toFixed(2)})`;
+}
+
+// =============== EVENTOS ===============
+function setupEventos() {
+  // Navegacao
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => trocarTela(btn.dataset.screen));
+  });
+
+  // Moeda
+  document.getElementById('moeda').addEventListener('change', e => {
+    estado.moeda = e.target.value;
+    atualizarCambioPreview();
+  });
+
+  // Valor
+  document.getElementById('valor').addEventListener('input', e => {
+    estado.valor = e.target.value;
+    atualizarCambioPreview();
+  });
+
+  // Item + autocomplete
+  const inputItem = document.getElementById('item');
+  inputItem.addEventListener('input', e => {
+    estado.item = e.target.value;
+    renderAutocomplete(e.target.value);
+  });
+  inputItem.addEventListener('focus', e => renderAutocomplete(e.target.value));
+  inputItem.addEventListener('blur', () => setTimeout(() => {
+    document.getElementById('ac-list').classList.remove('show');
+  }, 200));
+
+  // Categorias
+  document.getElementById('cat-grid').addEventListener('click', e => {
+    const btn = e.target.closest('.cat-btn');
+    if (!btn) return;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    estado.categoria = btn.dataset.cat;
+  });
+
+  // Metodo
+  document.getElementById('metodo-chips').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('#metodo-chips .chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    estado.metodo = chip.dataset.met;
+  });
+
+  // Data
+  const dataInput = document.getElementById('data');
+  dataInput.value = estado.data;
+  document.getElementById('data-edit').addEventListener('click', () => dataInput.showPicker?.() || dataInput.click());
+  dataInput.addEventListener('change', e => {
+    estado.data = e.target.value;
+    atualizarDataDisplay();
+  });
+
+  // Salvar
+  document.getElementById('btn-salvar').addEventListener('click', salvar);
+
+  // Ajustes
+  document.getElementById('btn-atualizar-cambio').addEventListener('click', () => buscarCambio(true));
+  document.getElementById('btn-conectar-drive').addEventListener('click', conectarDrive);
+  document.getElementById('btn-sync').addEventListener('click', sincronizar);
+  document.getElementById('btn-exportar').addEventListener('click', exportarCSV);
+  document.getElementById('btn-limpar-aprendidos').addEventListener('click', () => {
+    if (confirm('Apagar todos os itens aprendidos? Os pre-cadastrados permanecem.')) {
+      itensAprendidos = [];
+      salvarAprendidos();
+      renderAjustes();
+      toast('Itens aprendidos limpos', 'success');
+    }
+  });
+}
+
+function trocarTela(tela) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + tela).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.screen === tela));
+  if (tela === 'historico') renderHistorico();
+  if (tela === 'ajustes') renderAjustes();
+}
+
+// =============== AUTOCOMPLETE ===============
+function renderAutocomplete(q) {
+  const list = document.getElementById('ac-list');
+  if (!q || q.length < 2) { list.classList.remove('show'); return; }
+
+  const qLower = q.toLowerCase();
+  const todos = [...ITENS_PRE, ...itensAprendidos];
+  const matches = todos.filter(i => i.q.toLowerCase().includes(qLower)).slice(0, 6);
+
+  if (!matches.length) { list.classList.remove('show'); return; }
+
+  list.innerHTML = matches.map(m =>
+    `<div class="autocomplete-item" data-q="${m.q}" data-cat="${m.cat}">
+       <span class="nome">${m.q}</span>
+       <span class="cat">${CAT_LABEL[m.cat] || m.cat}</span>
+     </div>`
+  ).join('');
+  list.classList.add('show');
+
+  list.querySelectorAll('.autocomplete-item').forEach(el => {
+    el.addEventListener('mousedown', e => {
+      e.preventDefault();
+      document.getElementById('item').value = el.dataset.q;
+      estado.item = el.dataset.q;
+      // Auto-seleciona a categoria
+      const catBtn = document.querySelector(`.cat-btn[data-cat="${el.dataset.cat}"]`);
+      if (catBtn) {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+        catBtn.classList.add('selected');
+        estado.categoria = el.dataset.cat;
+      }
+      list.classList.remove('show');
+      // Foca no valor se vazio
+      if (!estado.valor) document.getElementById('valor').focus();
+    });
+  });
+}
+
+// =============== SALVAR ===============
+function salvar() {
+  const v = parseFloat(estado.valor);
+  if (!v || v <= 0) { toast('Informe um valor', 'error'); document.getElementById('valor').focus(); return; }
+  if (!estado.item || estado.item.trim().length < 2) { toast('Informe o item', 'error'); document.getElementById('item').focus(); return; }
+  if (!estado.categoria) { toast('Selecione uma categoria', 'error'); return; }
+
+  // Valor BRL: se moeda nao for BRL, calcula via cambio
+  let valor_brl = v;
+  let valor_original = null;
+  let moeda_original = null;
+  if (estado.moeda !== 'BRL') {
+    const taxa = estado.cambio[estado.moeda] || 5.5;
+    valor_brl = v * taxa;
+    valor_original = v;
+    moeda_original = estado.moeda;
+  }
+
+  const lanc = {
+    id: uuid(),
+    data: estado.data,
+    item: estado.item.trim(),
+    categoria: estado.categoria,
+    metodo: estado.metodo,
+    valor: parseFloat(valor_brl.toFixed(2)),
+    valor_original: valor_original,
+    moeda_original: moeda_original,
+    cambio_preview: moeda_original ? estado.cambio[moeda_original] : null,
+    criado_em: new Date().toISOString(),
+    sincronizado: false,
+  };
+
+  lancamentos.push(lanc);
+  salvarLancamentos();
+
+  // Aprende o item se nao for pre-cadastrado e nao foi aprendido ainda
+  const todos = [...ITENS_PRE, ...itensAprendidos];
+  if (!todos.find(i => i.q.toLowerCase() === lanc.item.toLowerCase())) {
+    itensAprendidos.push({q: lanc.item, cat: lanc.categoria});
+    salvarAprendidos();
+  }
+
+  toast(`Salvo: ${fmt(lanc.valor)}`, 'success');
+  limparFormulario();
+  atualizarSyncStatus();
+}
+
+function limparFormulario() {
+  estado.valor = '';
+  estado.item = '';
+  estado.categoria = null;
+  estado.moeda = 'BRL';
+  estado.data = new Date().toISOString().split('T')[0];
+  document.getElementById('valor').value = '';
+  document.getElementById('item').value = '';
+  document.getElementById('moeda').value = 'BRL';
+  document.getElementById('data').value = estado.data;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('ac-list').classList.remove('show');
+  atualizarDataDisplay();
+  atualizarCambioPreview();
+  document.getElementById('valor').focus();
+}
+
+// =============== HISTORICO ===============
+function renderHistorico() {
+  const hoje = new Date().toISOString().split('T')[0];
+  const semanaAtras = new Date(); semanaAtras.setDate(semanaAtras.getDate() - 7);
+  const semanaAtrasStr = semanaAtras.toISOString().split('T')[0];
+
+  const lancHoje = lancamentos.filter(l => l.data === hoje);
+  const lancSemana = lancamentos.filter(l => l.data >= semanaAtrasStr);
+
+  document.getElementById('total-hoje').textContent = fmt(lancHoje.reduce((s,l) => s+l.valor, 0));
+  document.getElementById('qtd-hoje').textContent = `${lancHoje.length} lancamento${lancHoje.length!==1?'s':''}`;
+  document.getElementById('total-semana').textContent = fmt(lancSemana.reduce((s,l) => s+l.valor, 0));
+  document.getElementById('qtd-semana').textContent = `${lancSemana.length} lancamento${lancSemana.length!==1?'s':''}`;
+
+  const lista = document.getElementById('lista-lancamentos');
+  if (!lancamentos.length) {
+    lista.innerHTML = `<div class="empty"><div class="display">Sem lancamentos</div><div class="sub">Use a tela "Lancar" para comecar.</div></div>`;
+    return;
+  }
+
+  // Agrupa por data, ordena desc
+  const grupos = {};
+  for (const l of lancamentos) {
+    if (!grupos[l.data]) grupos[l.data] = [];
+    grupos[l.data].push(l);
+  }
+  const datasOrd = Object.keys(grupos).sort().reverse();
+
+  lista.innerHTML = datasOrd.map(d => {
+    const items = grupos[d].sort((a,b) => b.criado_em.localeCompare(a.criado_em));
+    const total = items.reduce((s,l) => s+l.valor, 0);
+    const dt = new Date(d + 'T12:00:00');
+    const dispData = d === hoje ? 'Hoje' : dt.toLocaleDateString('pt-BR', {weekday: 'short', day: '2-digit', month: 'short'});
+    return `<div class="lanc-group">
+      <div class="lanc-group-header">
+        <span class="data">${dispData}</span>
+        <span class="total">${fmt(total)} - ${items.length} item${items.length!==1?'s':''}</span>
+      </div>
+      ${items.map(l => `
+        <div class="lanc-item ${l.sincronizado ? '' : 'pendente'}" data-id="${l.id}">
+          <div class="info">
+            <div class="item">${l.item}</div>
+            <div class="meta">
+              <span class="cat-tag">${CAT_LABEL[l.categoria] || l.categoria}</span>
+              <span>${l.metodo}</span>
+              ${l.moeda_original ? `<span>${fmtMoeda(l.valor_original, l.moeda_original)}</span>` : ''}
+              ${!l.sincronizado ? '<span style="color: var(--warn);">- pendente</span>' : ''}
+            </div>
+          </div>
+          <div class="valor">
+            ${fmt(l.valor)}
+            ${l.moeda_original ? `<div class="moeda">via cambio</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+
+  // Toque longo pra apagar
+  lista.querySelectorAll('.lanc-item').forEach(el => {
+    let press;
+    const start = () => { press = setTimeout(() => apagarLancamento(el.dataset.id), 600); };
+    const cancel = () => clearTimeout(press);
+    el.addEventListener('touchstart', start, {passive: true});
+    el.addEventListener('touchend', cancel);
+    el.addEventListener('touchmove', cancel);
+    el.addEventListener('mousedown', start);
+    el.addEventListener('mouseup', cancel);
+    el.addEventListener('mouseleave', cancel);
+  });
+}
+
+function apagarLancamento(id) {
+  const l = lancamentos.find(x => x.id === id);
+  if (!l) return;
+  if (confirm(`Apagar "${l.item}" (${fmt(l.valor)})?`)) {
+    lancamentos = lancamentos.filter(x => x.id !== id);
+    salvarLancamentos();
+    renderHistorico();
+    atualizarSyncStatus();
+    toast('Lancamento apagado', '');
+  }
+}
+
+// =============== CAMBIO ===============
+async function buscarCambio(manual = false) {
+  try {
+    const resp = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,GBP-BRL');
+    if (!resp.ok) throw new Error('API cambio falhou');
+    const data = await resp.json();
+    estado.cambio = {
+      USD: parseFloat(data.USDBRL?.bid || 5.45),
+      EUR: parseFloat(data.EURBRL?.bid || 5.85),
+      GBP: parseFloat(data.GBPBRL?.bid || 6.75),
+      atualizado: new Date().toISOString(),
+    };
+    localStorage.setItem('cambio', JSON.stringify(estado.cambio));
+    atualizarCambioPreview();
+    if (manual) { toast('Cambio atualizado', 'success'); renderAjustes(); }
+  } catch (e) {
+    if (manual) toast('Sem internet - usando cambio anterior', 'error');
+  }
+}
+
+// =============== AJUSTES ===============
+function renderAjustes() {
+  const pendentes = lancamentos.filter(l => !l.sincronizado).length;
+  document.getElementById('cfg-total').textContent = lancamentos.length;
+  document.getElementById('cfg-pendentes').textContent = pendentes;
+  const ultima = localStorage.getItem('ultima_sync');
+  document.getElementById('cfg-ultima').textContent = ultima
+    ? new Date(ultima).toLocaleString('pt-BR')
+    : 'nunca';
+
+  // Cambio
+  const lc = document.getElementById('lista-cambio');
+  const atualizado = estado.cambio.atualizado
+    ? new Date(estado.cambio.atualizado).toLocaleString('pt-BR')
+    : 'nunca atualizado';
+  lc.innerHTML = `
+    <div class="row"><span class="lbl">USD</span><span class="val">R$ ${estado.cambio.USD?.toFixed(2)||'-'}</span></div>
+    <div class="row"><span class="lbl">EUR</span><span class="val">R$ ${estado.cambio.EUR?.toFixed(2)||'-'}</span></div>
+    <div class="row"><span class="lbl">GBP</span><span class="val">R$ ${estado.cambio.GBP?.toFixed(2)||'-'}</span></div>
+    <div class="row"><span class="lbl">Atualizado</span><span class="val" style="font-size: 11px;">${atualizado}</span></div>
+  `;
+
+  // Itens
+  document.getElementById('cfg-itens-pre').textContent = ITENS_PRE.length;
+  document.getElementById('cfg-itens-apr').textContent = itensAprendidos.length;
+
+  // Drive button state
+  const btnSync = document.getElementById('btn-sync');
+  if (estado.driveToken) {
+    btnSync.disabled = false;
+    document.getElementById('btn-conectar-drive').textContent = 'Reconectar Google Drive';
+  } else {
+    btnSync.disabled = true;
+  }
+}
+
+function atualizarSyncStatus() {
+  const pendentes = lancamentos.filter(l => !l.sincronizado).length;
+  const dot = document.getElementById('sync-dot');
+  const text = document.getElementById('sync-text');
+  if (!estado.driveToken) {
+    dot.className = 'dot';
+    text.textContent = 'sem drive';
+  } else if (pendentes === 0) {
+    dot.className = 'dot ok';
+    text.textContent = 'sincronizado';
+  } else {
+    dot.className = 'dot warn';
+    text.textContent = `${pendentes} pendente${pendentes!==1?'s':''}`;
+  }
+}
+
+// =============== EXPORTAR CSV (fallback manual) ===============
+function exportarCSV() {
+  if (!lancamentos.length) { toast('Nada para exportar', 'error'); return; }
+
+  const linhas = ['id;data;item;categoria;metodo;valor;valor_original;moeda_original;cambio_preview;criado_em'];
+  for (const l of lancamentos) {
+    linhas.push([
+      l.id, l.data, l.item.replace(/;/g, ','), l.categoria, l.metodo,
+      l.valor.toFixed(2).replace('.', ','),
+      l.valor_original ? l.valor_original.toFixed(2).replace('.', ',') : '',
+      l.moeda_original || '',
+      l.cambio_preview ? l.cambio_preview.toFixed(4).replace('.', ',') : '',
+      l.criado_em,
+    ].join(';'));
+  }
+
+  const csv = linhas.join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+
+  // Tenta share API (Android moderno)
+  if (navigator.canShare && navigator.canShare({files: [new File([blob], 'lancamentos.csv', {type: 'text/csv'})]})) {
+    navigator.share({
+      files: [new File([blob], 'lancamentos_manuais.csv', {type: 'text/csv'})],
+      title: 'Lancamentos para o Dashboard',
+    }).then(() => marcarTodosSincronizados()).catch(() => {});
+  } else {
+    // Download direto
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lancamentos_manuais.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    setTimeout(() => marcarTodosSincronizados(), 500);
+  }
+}
+
+function marcarTodosSincronizados() {
+  let mudou = false;
+  for (const l of lancamentos) {
+    if (!l.sincronizado) { l.sincronizado = true; mudou = true; }
+  }
+  if (mudou) {
+    salvarLancamentos();
+    localStorage.setItem('ultima_sync', new Date().toISOString());
+    atualizarSyncStatus();
+    renderAjustes();
+    renderHistorico();
+    toast('Marcados como sincronizados', 'success');
+  }
+}
+
+// =============== GOOGLE DRIVE ===============
+async function conectarDrive() {
+  // Verifica se ja tem CLIENT_ID configurado
+  let clientId = localStorage.getItem('drive_client_id');
+  if (!clientId) {
+    clientId = prompt(
+      'Cole o Google OAuth Client ID:\n\n' +
+      '(Veja o README do PWA para gerar o seu. Sem ele, use "Exportar CSV" manual.)'
+    );
+    if (!clientId || clientId.length < 20) {
+      toast('Client ID invalido', 'error');
+      return;
+    }
+    localStorage.setItem('drive_client_id', clientId.trim());
+  }
+
+  // Carrega Google Identity Services se nao carregado
+  if (!window.google?.accounts?.oauth2) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://accounts.google.com/gsi/client';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  try {
+    const tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: DRIVE_CONFIG.SCOPE,
+      callback: (resp) => {
+        if (resp.access_token) {
+          estado.driveToken = resp.access_token;
+          localStorage.setItem('drive_token_exp', Date.now() + (resp.expires_in * 1000));
+          sessionStorage.setItem('drive_token', resp.access_token);
+          toast('Drive conectado!', 'success');
+          atualizarSyncStatus();
+          renderAjustes();
+        } else {
+          toast('Falha ao conectar', 'error');
+        }
+      },
+      error_callback: (e) => {
+        toast('Erro: ' + (e.message || 'autenticacao falhou'), 'error');
+      }
+    });
+    tokenClient.requestAccessToken();
+  } catch (e) {
+    toast('Erro: ' + e.message, 'error');
+  }
+}
+
+async function sincronizar() {
+  if (!estado.driveToken) { toast('Conecte o Drive primeiro', 'error'); return; }
+  const pendentes = lancamentos.filter(l => !l.sincronizado);
+  if (!pendentes.length) { toast('Nada pendente', ''); return; }
+
+  toast('Sincronizando...', '');
+  try {
+    // 1. Procura arquivo existente
+    const buscaResp = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_CONFIG.FILE_NAME}'+and+trashed=false&fields=files(id,name)`,
+      { headers: { Authorization: `Bearer ${estado.driveToken}` } }
+    );
+    if (!buscaResp.ok) throw new Error(`Drive API: ${buscaResp.status}`);
+    const busca = await buscaResp.json();
+    const fileId = busca.files?.[0]?.id;
+
+    // 2. Le conteudo existente (se houver) para appendar
+    let conteudoExistente = '';
+    if (fileId) {
+      const getResp = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+        { headers: { Authorization: `Bearer ${estado.driveToken}` } }
+      );
+      if (getResp.ok) conteudoExistente = await getResp.text();
+    }
+
+    // 3. Constroi CSV unificado (mantem o que ja existe e adiciona novos)
+    let linhas;
+    if (conteudoExistente.trim()) {
+      linhas = conteudoExistente.trim().split('\n');
+    } else {
+      linhas = ['id;data;item;categoria;metodo;valor;valor_original;moeda_original;cambio_preview;criado_em'];
+    }
+    // Conjunto de IDs ja presentes (evita duplicar)
+    const idsExistentes = new Set();
+    for (let i = 1; i < linhas.length; i++) {
+      const id = linhas[i].split(';')[0];
+      if (id) idsExistentes.add(id);
+    }
+    // Adiciona pendentes que ainda nao estao no arquivo
+    for (const l of pendentes) {
+      if (idsExistentes.has(l.id)) continue;
+      linhas.push([
+        l.id, l.data, l.item.replace(/;/g, ','), l.categoria, l.metodo,
+        l.valor.toFixed(2).replace('.', ','),
+        l.valor_original ? l.valor_original.toFixed(2).replace('.', ',') : '',
+        l.moeda_original || '',
+        l.cambio_preview ? l.cambio_preview.toFixed(4).replace('.', ',') : '',
+        l.criado_em,
+      ].join(';'));
+    }
+    const csvFinal = linhas.join('\n');
+
+    // 4. Upload (cria ou atualiza)
+    const boundary = '-------314159265358979323846';
+    const delim = `\r\n--${boundary}\r\n`;
+    const closeDelim = `\r\n--${boundary}--`;
+    const metadata = { name: DRIVE_CONFIG.FILE_NAME, mimeType: 'text/csv' };
+    const multipartBody =
+      delim + 'Content-Type: application/json\r\n\r\n' + JSON.stringify(metadata) +
+      delim + 'Content-Type: text/csv\r\n\r\n' + csvFinal +
+      closeDelim;
+
+    const uploadUrl = fileId
+      ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
+      : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
+    const uploadResp = await fetch(uploadUrl, {
+      method: fileId ? 'PATCH' : 'POST',
+      headers: {
+        Authorization: `Bearer ${estado.driveToken}`,
+        'Content-Type': `multipart/related; boundary=${boundary}`,
+      },
+      body: multipartBody,
+    });
+
+    if (!uploadResp.ok) {
+      const erro = await uploadResp.text();
+      throw new Error(`Upload falhou: ${uploadResp.status} - ${erro.slice(0,200)}`);
+    }
+
+    // 5. Marca como sincronizado
+    for (const l of pendentes) l.sincronizado = true;
+    salvarLancamentos();
+    localStorage.setItem('ultima_sync', new Date().toISOString());
+
+    toast(`${pendentes.length} sincronizado${pendentes.length>1?'s':''}`, 'success');
+    atualizarSyncStatus();
+    renderAjustes();
+    renderHistorico();
+
+  } catch (e) {
+    console.error(e);
+    toast('Erro sync: ' + e.message.slice(0,80), 'error');
+    if (e.message.includes('401') || e.message.includes('403')) {
+      estado.driveToken = null;
+      sessionStorage.removeItem('drive_token');
+      toast('Token expirou - reconecte', 'error');
+    }
+  }
+}
+
+// Restaurar token da sessao se ainda valido
+const tokenSalvo = sessionStorage.getItem('drive_token');
+const tokenExp = parseInt(localStorage.getItem('drive_token_exp') || '0');
+if (tokenSalvo && Date.now() < tokenExp) {
+  estado.driveToken = tokenSalvo;
+}
+
+// =============== START ===============
+init();
+</script>
+</body>
+</html>
