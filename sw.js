@@ -1,5 +1,5 @@
 // Service Worker - permite uso offline do PWA
-const CACHE_NAME = 'gastos-pwa-v2';
+const CACHE_NAME = 'gastos-pwa-v5';
 const ARQUIVOS = [
   './',
   './index.html',
