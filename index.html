@@ -293,6 +293,17 @@ html, body {
 }
 
 /* === TELA STATUS DAS METAS === */
+.status-card-mes {
+  margin-bottom: 24px;
+}
+.status-card-tipo {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); font-weight: 700; margin-bottom: 4px;
+}
+.status-card-tipo-sub {
+  font-size: 11px; color: var(--ink-faint); font-weight: 500;
+  text-transform: none; letter-spacing: 0; margin-left: 4px;
+}
 .status-resumo {
   background: var(--bg-card); border-radius: 12px; padding: 20px;
   border: 1px solid var(--rule); margin-bottom: 16px;
@@ -408,6 +419,116 @@ html, body {
 }
 .modal-metas .meta-row input:focus { border-color: var(--accent); }
 
+/* === TELA IA === */
+.ia-status-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg-card); border-radius: 8px; padding: 10px 14px;
+  margin-bottom: 12px; border: 1px solid var(--rule);
+}
+.ia-status-info { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-soft); font-family: 'JetBrains Mono'; }
+.ia-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ink-faint); }
+.ia-dot.online { background: var(--accent); }
+.ia-dot.offline { background: var(--alarm); }
+.ia-reload-btn {
+  background: var(--bg-soft); border: none; padding: 4px 10px;
+  border-radius: 4px; font-size: 16px; cursor: pointer; color: var(--ink);
+}
+
+.ia-help-mobile {
+  font-size: 11px; color: var(--ink-faint); padding: 8px 12px;
+  background: var(--bg-soft); border-radius: 6px; margin-bottom: 12px;
+  border-left: 3px solid var(--accent); line-height: 1.4;
+}
+.ia-help-mobile strong { color: var(--accent); }
+
+.ia-quick-mobile {
+  display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;
+}
+.ia-quick-btn-mobile {
+  width: 100%; padding: 12px 14px; background: var(--bg-card);
+  border: 1px solid var(--rule); border-radius: 8px; font-family: 'Inter';
+  font-size: 13px; color: var(--ink); cursor: pointer; text-align: left;
+  font-weight: 500; transition: all 0.15s;
+}
+.ia-quick-btn-mobile:active { background: var(--accent); color: white; }
+.ia-quick-btn-mobile:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ia-historico-mobile {
+  margin-bottom: 14px; max-height: calc(100vh - 480px); overflow-y: auto;
+}
+.ia-vazio-mobile {
+  padding: 24px 12px; text-align: center; color: var(--ink-faint);
+  font-size: 12px; font-style: italic;
+}
+
+.ia-msg-mobile { margin-bottom: 14px; }
+.ia-msg-pergunta-mobile {
+  background: var(--bg-soft); padding: 8px 12px; border-radius: 6px;
+  font-size: 12px; color: var(--ink); margin-bottom: 6px;
+  border-left: 3px solid var(--ink-faint);
+}
+.ia-msg-resposta-mobile {
+  padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--rule);
+  border-radius: 8px; font-size: 13px; line-height: 1.55; color: var(--ink);
+  white-space: pre-wrap;
+}
+.ia-msg-resposta-mobile p { margin: 0 0 10px; }
+.ia-msg-resposta-mobile p:last-child { margin-bottom: 0; }
+.ia-msg-resposta-mobile strong { font-weight: 600; }
+.ia-msg-rodape-mobile {
+  font-size: 10px; color: var(--ink-faint); margin-top: 6px;
+  display: flex; gap: 8px; font-family: 'JetBrains Mono';
+}
+.ia-msg-rodape-mobile .badge { background: var(--bg-soft); padding: 1px 6px; border-radius: 6px; }
+.ia-msg-rodape-mobile .badge.cache { background: rgba(61, 90, 64, 0.12); color: var(--accent); }
+
+.ia-pensando-mobile {
+  padding: 14px; background: var(--bg-card); border: 1px dashed var(--rule);
+  border-radius: 8px; font-size: 12px; color: var(--ink-soft);
+  display: flex; align-items: center; gap: 10px; font-style: italic;
+}
+.ia-pensando-mobile::before {
+  content: ''; width: 12px; height: 12px; border: 2px solid var(--ink-faint);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: ia-spin-m 0.8s linear infinite; display: inline-block;
+}
+@keyframes ia-spin-m { to { transform: rotate(360deg); } }
+
+.ia-erro-mobile {
+  padding: 10px 12px; background: rgba(139,46,46,0.08);
+  border: 1px solid var(--alarm); border-radius: 6px;
+  color: var(--alarm); font-size: 12px; line-height: 1.4;
+}
+
+.ia-input-mobile {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-top: 12px; border-top: 1px solid var(--rule);
+}
+.ia-input-mobile textarea {
+  width: 100%; padding: 10px 12px; font-family: 'Inter'; font-size: 14px;
+  color: var(--ink); background: var(--bg-card); border: 1px solid var(--rule);
+  border-radius: 6px; resize: none; outline: none; box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.ia-input-mobile textarea:focus { border-color: var(--accent); }
+.ia-input-mobile textarea:disabled { opacity: 0.6; }
+
+.ia-input-controls-mobile {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+}
+.ia-refresh-mobile {
+  font-size: 11px; color: var(--ink-faint); display: flex;
+  align-items: center; gap: 6px; cursor: pointer;
+}
+.ia-refresh-mobile input { margin: 0; }
+.ia-submit-mobile {
+  padding: 9px 18px; background: var(--accent); color: white;
+  border: none; border-radius: 6px; font-family: 'Inter'; font-weight: 500;
+  font-size: 14px; cursor: pointer;
+}
+.ia-submit-mobile:active { transform: scale(0.97); }
+.ia-submit-mobile:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* Toast com severidade */
 .toast.warn { background: var(--gold); }
 </style>
@@ -504,23 +625,60 @@ html, body {
     <!-- TELA STATUS DAS METAS -->
     <div class="screen" id="screen-status">
 
-      <div class="status-resumo">
-        <div class="status-mes" id="status-mes-label">maio/2026</div>
-        <div class="status-total">
-          <div class="status-valor mono" id="status-total-gasto">R$ 0,00</div>
-          <div class="status-meta mono">de <span id="status-total-meta">R$ 0,00</span></div>
+      <!-- Card 1: Mes corrente (cartao + outros pagos neste mes) -->
+      <div class="status-card-mes" id="card-corrente">
+        <div class="status-resumo">
+          <div class="status-card-tipo">Mes corrente <span class="status-card-tipo-sub">— sai da conta agora</span></div>
+          <div class="status-mes" id="corrente-mes-label">--</div>
+          <div class="status-total">
+            <div class="status-valor mono" id="corrente-total-gasto">R$ 0,00</div>
+            <div class="status-meta mono">de <span id="corrente-total-meta">R$ 0,00</span></div>
+          </div>
+          <div class="status-bar-wrap">
+            <div class="status-bar" id="corrente-bar-geral"></div>
+          </div>
+          <div class="status-summary" id="corrente-summary"></div>
         </div>
-        <div class="status-bar-wrap">
-          <div class="status-bar" id="status-bar-geral"></div>
+        <div class="status-categorias-cont" id="corrente-categorias"></div>
+      </div>
+
+      <!-- Card 2: Proximo mes (proxima fatura + outros futuros) -->
+      <div class="status-card-mes" id="card-proximo">
+        <div class="status-resumo">
+          <div class="status-card-tipo">Proximo mes <span class="status-card-tipo-sub">— fatura ja fechada</span></div>
+          <div class="status-mes" id="proximo-mes-label">--</div>
+          <div class="status-total">
+            <div class="status-valor mono" id="proximo-total-gasto">R$ 0,00</div>
+            <div class="status-meta mono">de <span id="proximo-total-meta">R$ 0,00</span></div>
+          </div>
+          <div class="status-bar-wrap">
+            <div class="status-bar" id="proximo-bar-geral"></div>
+          </div>
+          <div class="status-summary" id="proximo-summary"></div>
         </div>
-        <div class="status-summary" id="status-summary"></div>
+        <div class="status-categorias-cont" id="proximo-categorias"></div>
+      </div>
+
+      <!-- Card 3: Em formacao (cartao apos dia 21) -->
+      <div class="status-card-mes" id="card-emformacao">
+        <div class="status-resumo">
+          <div class="status-card-tipo">Em formacao <span class="status-card-tipo-sub">— cartao pos dia 21</span></div>
+          <div class="status-mes" id="emformacao-mes-label">--</div>
+          <div class="status-total">
+            <div class="status-valor mono" id="emformacao-total-gasto">R$ 0,00</div>
+            <div class="status-meta mono">de <span id="emformacao-total-meta">R$ 0,00</span></div>
+          </div>
+          <div class="status-bar-wrap">
+            <div class="status-bar" id="emformacao-bar-geral"></div>
+          </div>
+          <div class="status-summary" id="emformacao-summary"></div>
+        </div>
+        <div class="status-categorias-cont" id="emformacao-categorias"></div>
       </div>
 
       <div class="status-help">
-        Indicadores baseados nos seus lançamentos no PWA. Despesas fixas (consórcio, escola) ficam na planilha — não entram aqui.
+        Cartao Bradesco fecha dia 21 e paga dia 3 do mes seguinte. Cada gasto entra na meta do mes em que sai da conta. Pix, TR e Outros contam no mes do calendario.
       </div>
-
-      <div id="status-categorias"></div>
 
       <div class="section-block" style="margin-top: 24px;">
         <h2>Configurar metas</h2>
@@ -542,6 +700,44 @@ html, body {
           </span>
         </div>
         <button class="btn secondary" id="btn-editar-metas" style="margin-top: 12px;">Editar metas por categoria</button>
+      </div>
+
+    </div>
+
+    <!-- TELA IA -->
+    <div class="screen" id="screen-ia">
+
+      <div class="ia-status-bar">
+        <div class="ia-status-info">
+          <span class="ia-dot" id="ia-dot"></span>
+          <span id="ia-status-text">verificando&hellip;</span>
+        </div>
+        <button class="ia-reload-btn" id="ia-reload-btn" title="Verificar conexao">↻</button>
+      </div>
+
+      <div class="ia-help-mobile" id="ia-help-mobile">
+        Conecte ao proxy local em casa. Configure o IP do PC em <strong>Ajustes</strong>.
+      </div>
+
+      <div class="ia-quick-mobile">
+        <button class="ia-quick-btn-mobile" data-pergunta="Considerando a data de hoje e o cartao Bradesco que uso em 90% dos gastos, posso gastar uma quantia agora? Quanto vai impactar a meta atual e em qual mes fiscal? De um numero direto de quanto posso gastar antes de comprometer a meta.">Posso gastar agora?</button>
+        <button class="ia-quick-btn-mobile" data-pergunta="Faca um resumo curto da minha situacao atual: quanto ja gastei do mes corrente, quanto da proxima fatura ja esta comprometido, e qual o saldo livre considerando metas e receita. Maximo 3 paragrafos.">Status do mes</button>
+        <button class="ia-quick-btn-mobile" data-pergunta="Sobre a proxima fatura do cartao Bradesco a vencer: quanto ja esta comprometido em parcelas, gastos confirmados e despesas fixas? Quanto resta de folga ate ela fechar? Resposta concisa.">Proxima fatura</button>
+      </div>
+
+      <div class="ia-historico-mobile" id="ia-historico-mobile">
+        <div class="ia-vazio-mobile">Toque num botao acima ou escreva uma pergunta abaixo.</div>
+      </div>
+
+      <div class="ia-input-mobile">
+        <textarea id="ia-pergunta-mobile" placeholder="Pergunte algo..." rows="2"></textarea>
+        <div class="ia-input-controls-mobile">
+          <label class="ia-refresh-mobile">
+            <input type="checkbox" id="ia-forcar-refresh-mobile">
+            <span>Nova analise</span>
+          </label>
+          <button class="ia-submit-mobile" id="ia-submit-mobile">Perguntar</button>
+        </div>
       </div>
 
     </div>
@@ -576,6 +772,23 @@ html, body {
       </div>
 
       <div class="section-block">
+        <h2>IA - Servidor proxy</h2>
+        <p>O proxy <code>analise_ia.py</code> deve estar rodando no seu PC. Informe o IP local do PC (rode <code>ipconfig</code> no Windows e busque "Endereco IPv4").</p>
+        <div class="row" style="align-items: stretch;">
+          <span class="lbl" style="align-self: center;">IP do PC</span>
+          <input type="text" id="cfg-ia-ip" placeholder="192.168.0.105" inputmode="decimal"
+            style="flex: 1; max-width: 180px; padding: 8px 10px; font-family: 'JetBrains Mono'; font-size: 13px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg-card); text-align: right;">
+        </div>
+        <div class="row">
+          <span class="lbl">Porta</span>
+          <input type="text" id="cfg-ia-porta" value="8001" inputmode="numeric"
+            style="width: 80px; padding: 4px 8px; font-family: 'JetBrains Mono'; text-align: right; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg-card);">
+        </div>
+        <div class="row"><span class="lbl">Status atual</span><span class="val" id="cfg-ia-status">&mdash;</span></div>
+        <button class="btn accent" id="btn-testar-ia" style="margin-top: 12px;">Salvar e testar conexao</button>
+      </div>
+
+      <div class="section-block">
         <h2>Sobre</h2>
         <p style="margin-bottom: 4px;">Gastos PWA v1.0</p>
         <p style="font-size: 11px; opacity: 0.7;">Captura rapida de gastos para o dashboard de gestao financeira.</p>
@@ -599,6 +812,10 @@ html, body {
       <span class="ic">◔</span>
       <span class="lbl">Status</span>
       <span class="nav-badge" id="nav-badge-status" style="display: none;"></span>
+    </button>
+    <button class="nav-btn" data-screen="ia">
+      <span class="ic">★</span>
+      <span class="lbl">IA</span>
     </button>
     <button class="nav-btn" data-screen="ajustes">
       <span class="ic">⚙</span>
@@ -749,12 +966,14 @@ function salvarAprendidos() { localStorage.setItem('itens_aprendidos', JSON.stri
 function init() {
   renderCategorias();
   setupEventos();
+  setupIaEventos();
   atualizarDataDisplay();
   buscarCambio(); // tenta atualizar cambio em background
   renderHistorico();
   renderAjustes();
   atualizarSyncStatus();
   atualizarIndicadorMetas();
+  iaVerificarStatusMobile();
 
   // Registra service worker
   if ('serviceWorker' in navigator) {
@@ -900,6 +1119,7 @@ function trocarTela(tela) {
   if (tela === 'historico') renderHistorico();
   if (tela === 'ajustes') renderAjustes();
   if (tela === 'status') renderStatus();
+  if (tela === 'ia') iaVerificarStatusMobile();
 }
 
 // =============== AUTOCOMPLETE ===============
@@ -941,44 +1161,77 @@ function renderAutocomplete(q) {
 }
 
 // =============== STATUS DE METAS ===============
-function calcularStatusMes() {
-  // Mes corrente baseado na data do celular
+// Determina o mes fiscal de um lancamento conforme metodo de pagamento e data:
+// - CC Bradesco: fechamento dia 21. Compra dia <= 21 cai na fatura do mes seguinte.
+//   Compra dia >= 22 cai na fatura de 2 meses depois.
+// - Outros metodos (Pix, TR, Outros): mes civil simples (mes da propria data).
+function mesFiscalDoLancamento(dataStr, metodo) {
+  if (!dataStr) return null;
+  const partes = dataStr.split('-');
+  if (partes.length !== 3) return null;
+  const ano = parseInt(partes[0]);
+  const mes = parseInt(partes[1]);
+  const dia = parseInt(partes[2]);
+  const metodoNorm = (metodo || '').toLowerCase();
+  const ehCartao = metodoNorm.includes('cc') || metodoNorm.includes('bradesco') || metodoNorm.includes('credito');
+  if (ehCartao) {
+    // Cartao: dia <= 21 vai pra fatura do mes seguinte; >= 22 vai pra +2 meses
+    const deslocamento = (dia <= 21) ? 1 : 2;
+    const dt = new Date(ano, mes - 1 + deslocamento, 1);
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+  } else {
+    // Outros metodos: mes civil
+    return `${ano}-${String(mes).padStart(2, '0')}`;
+  }
+}
+
+// Retorna os tres meses fiscais relevantes:
+// - corrente: mes do calendario atual (paga fatura fechada no dia 21 do mes anterior)
+// - proximo: mes+1 (paga fatura fechada no dia 21 do mes corrente)
+// - emFormacao: mes+2 (paga fatura que ainda esta sendo formada com compras pos-dia-21)
+function mesesAtuais() {
   const hoje = new Date();
   const ano = hoje.getFullYear();
   const mes = hoje.getMonth() + 1;
-  const prefixoMes = `${ano}-${String(mes).padStart(2,'0')}`;
+  function offsetMes(n) {
+    const dt = new Date(ano, mes - 1 + n, 1);
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+  }
+  return {
+    corrente: offsetMes(0),
+    proximo: offsetMes(1),
+    emFormacao: offsetMes(2),
+  };
+}
 
-  // Lancamentos do mes corrente
-  const lancMes = lancamentos.filter(l => l.data && l.data.startsWith(prefixoMes));
+// Calcula status agregado de um mes fiscal especifico
+// (computa apenas lancamentos cujo mesFiscalDoLancamento bate com mesAlvo)
+function calcularStatusDeMes(mesAlvo) {
+  const lancsDoMes = lancamentos.filter(l => mesFiscalDoLancamento(l.data, l.metodo) === mesAlvo);
 
   // Soma por categoria
   const gastoPorCat = {};
   for (const cat of Object.keys(METAS)) gastoPorCat[cat] = 0;
-  for (const l of lancMes) {
+  for (const l of lancsDoMes) {
     if (gastoPorCat[l.categoria] !== undefined) {
       gastoPorCat[l.categoria] += l.valor;
     }
   }
 
-  // Calcular status de cada categoria
   const categorias = [];
-  let totalGasto = 0;
-  let totalMeta = 0;
-  let nAlarm = 0;
-  let nWarn = 0;
+  let totalGasto = 0, totalMeta = 0, nAlarm = 0, nWarn = 0;
   for (const cat of Object.keys(METAS)) {
     const meta = METAS[cat] || 0;
     const gasto = gastoPorCat[cat] || 0;
     totalGasto += gasto;
     totalMeta += meta;
-    if (meta <= 0) continue; // ignora categorias sem meta
+    if (meta <= 0) continue;
     const pct = (gasto / meta) * 100;
     let nivel = 'ok';
     if (pct >= LIMIARES.vermelho) { nivel = 'alarm'; nAlarm++; }
     else if (pct >= LIMIARES.amarelo) { nivel = 'warn'; nWarn++; }
     categorias.push({ cat, meta, gasto, pct, nivel });
   }
-  // Ordena: alarm primeiro, depois warn, depois ok (por pct desc dentro)
   const ordemNivel = { alarm: 0, warn: 1, ok: 2 };
   categorias.sort((a, b) => {
     if (ordemNivel[a.nivel] !== ordemNivel[b.nivel]) return ordemNivel[a.nivel] - ordemNivel[b.nivel];
@@ -990,44 +1243,69 @@ function calcularStatusMes() {
   if (nAlarm > 0) nivelGeral = 'alarm';
   else if (nWarn > 0) nivelGeral = 'warn';
 
+  // Parse mes alvo pra label
+  const [a, m] = mesAlvo.split('-').map(Number);
+
   return {
-    prefixoMes, mes, ano,
+    mesAlvo, ano: a, mes: m,
     categorias,
     totalGasto, totalMeta, pctGeral,
     nAlarm, nWarn, nivelGeral,
-    nLanc: lancMes.length,
+    nLanc: lancsDoMes.length,
   };
 }
 
-function renderStatus() {
-  const st = calcularStatusMes();
+// Funcao agregadora: status dos 3 meses (corrente, proximo, emFormacao)
+function calcularStatusMes() {
+  const { corrente, proximo, emFormacao } = mesesAtuais();
+  const stCorrente = calcularStatusDeMes(corrente);
+  const stProximo = calcularStatusDeMes(proximo);
+  const stEmFormacao = calcularStatusDeMes(emFormacao);
 
-  // Mes label
+  // Indicador geral consolidado (pior caso entre os tres)
+  const ordemNivel = { ok: 0, warn: 1, alarm: 2 };
+  let piorNivel = stCorrente.nivelGeral;
+  for (const s of [stProximo, stEmFormacao]) {
+    if (ordemNivel[s.nivelGeral] > ordemNivel[piorNivel]) piorNivel = s.nivelGeral;
+  }
+  const nAlarmTotal = stCorrente.nAlarm + stProximo.nAlarm + stEmFormacao.nAlarm;
+  const nWarnTotal = stCorrente.nWarn + stProximo.nWarn + stEmFormacao.nWarn;
+  return {
+    corrente: stCorrente,
+    proximo: stProximo,
+    emFormacao: stEmFormacao,
+    nivelGeral: piorNivel,
+    nAlarmTotal,
+    nWarnTotal,
+    totalMetaGeral: stCorrente.totalMeta,
+  };
+}
+
+// Renderiza UM card de mes (civil ou fatura) usando o prefixo dos IDs
+function _renderCardMes(st, prefixoIds) {
   const nomes = ['', 'janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-  document.getElementById('status-mes-label').textContent = `${nomes[st.mes]} de ${st.ano}`;
 
-  // Total
-  document.getElementById('status-total-gasto').textContent = fmt(st.totalGasto);
-  document.getElementById('status-total-meta').textContent = fmt(st.totalMeta);
+  document.getElementById(`${prefixoIds}-mes-label`).textContent = `${nomes[st.mes]} de ${st.ano}`;
+  document.getElementById(`${prefixoIds}-total-gasto`).textContent = fmt(st.totalGasto);
+  document.getElementById(`${prefixoIds}-total-meta`).textContent = fmt(st.totalMeta);
 
-  // Barra geral
-  const bar = document.getElementById('status-bar-geral');
+  const bar = document.getElementById(`${prefixoIds}-bar-geral`);
   bar.style.width = Math.min(st.pctGeral, 100) + '%';
   bar.className = 'status-bar ' + (st.nivelGeral === 'ok' ? '' : st.nivelGeral);
 
-  // Sumario
-  const sum = document.getElementById('status-summary');
-  let sumTexto = `${st.pctGeral.toFixed(0)}% da meta consumida - ${st.nLanc} lancamento${st.nLanc!==1?'s':''} no mes`;
-  if (st.nAlarm > 0) sumTexto += ` - ${st.nAlarm} categoria${st.nAlarm>1?'s':''} estourada${st.nAlarm>1?'s':''}`;
+  const sum = document.getElementById(`${prefixoIds}-summary`);
+  let sumTexto = `${st.pctGeral.toFixed(0)}% da meta - ${st.nLanc} lancamento${st.nLanc!==1?'s':''}`;
+  if (st.nAlarm > 0) sumTexto += ` - ${st.nAlarm} estourada${st.nAlarm>1?'s':''}`;
   else if (st.nWarn > 0) sumTexto += ` - ${st.nWarn} em alerta`;
   sum.textContent = sumTexto;
 
-  // Lista de categorias
-  const cont = document.getElementById('status-categorias');
-  if (!st.categorias.length) {
-    cont.innerHTML = `<div class="cat-status-empty">Configure metas nas categorias para ver o status aqui.</div>`;
+  // Lista de categorias (filtra so as que tem gasto OU estao em alerta)
+  const cont = document.getElementById(`${prefixoIds}-categorias`);
+  const visiveis = st.categorias.filter(c => c.gasto > 0 || c.nivel !== 'ok');
+  if (!visiveis.length) {
+    cont.innerHTML = `<div class="cat-status-empty">Sem gastos neste mes ainda.</div>`;
   } else {
-    cont.innerHTML = st.categorias.map(c => {
+    cont.innerHTML = visiveis.map(c => {
       const pctBar = Math.min(c.pct, 100);
       const restante = c.meta - c.gasto;
       let bottomTxt;
@@ -1046,6 +1324,13 @@ function renderStatus() {
       </div>`;
     }).join('');
   }
+}
+
+function renderStatus() {
+  const st = calcularStatusMes();
+  _renderCardMes(st.corrente, 'corrente');
+  _renderCardMes(st.proximo, 'proximo');
+  _renderCardMes(st.emFormacao, 'emformacao');
 
   // Limiares inputs
   document.getElementById('limiar-amarelo').value = LIMIARES.amarelo;
@@ -1059,18 +1344,18 @@ function atualizarIndicadorMetas(st) {
   // Se st nao foi passado, calcula
   if (!st) st = calcularStatusMes();
   const pulse = document.getElementById('meta-pulse');
-  if (st.totalMeta <= 0) { pulse.style.display = 'none'; return; }
+  if (st.totalMetaGeral <= 0) { pulse.style.display = 'none'; return; }
   pulse.style.display = 'flex';
   pulse.className = 'meta-pulse ' + (st.nivelGeral === 'ok' ? '' : st.nivelGeral);
 
-  // Badge na nav
+  // Badge na nav: soma alertas dos dois meses
   const badge = document.getElementById('nav-badge-status');
-  if (st.nAlarm > 0) {
-    badge.textContent = st.nAlarm;
+  if (st.nAlarmTotal > 0) {
+    badge.textContent = st.nAlarmTotal;
     badge.className = 'nav-badge';
     badge.style.display = 'flex';
-  } else if (st.nWarn > 0) {
-    badge.textContent = st.nWarn;
+  } else if (st.nWarnTotal > 0) {
+    badge.textContent = st.nWarnTotal;
     badge.className = 'nav-badge warn';
     badge.style.display = 'flex';
   } else {
@@ -1079,40 +1364,51 @@ function atualizarIndicadorMetas(st) {
 }
 
 // Avalia se este lancamento novo cruzou um limiar - retorna mensagem ou null
+// Usa o mes fiscal correto do metodo:
+// - Cartao Bradesco: meta do mes da fatura (compra dia<=21 -> mes+1; dia>=22 -> mes+2)
+// - Outros metodos: meta do mes civil
 function avaliarAlertaLancamento(novoLanc) {
   const cat = novoLanc.categoria;
   const meta = METAS[cat] || 0;
   if (meta <= 0) return null; // sem meta, sem alerta
 
-  const hoje = new Date();
-  const prefixoMes = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+  // Determina qual mes fiscal aplicar ao lancamento
+  const mesFiscal = mesFiscalDoLancamento(novoLanc.data, novoLanc.metodo);
+  if (!mesFiscal) return null;
+
+  // Soma de gastos da mesma categoria que caem no MESMO mes fiscal
   const gastoAtual = lancamentos
-    .filter(l => l.data && l.data.startsWith(prefixoMes) && l.categoria === cat)
+    .filter(l => l.categoria === cat && mesFiscalDoLancamento(l.data, l.metodo) === mesFiscal)
     .reduce((s, l) => s + l.valor, 0);
   const gastoAnterior = gastoAtual - novoLanc.valor;
 
   const pctAtual = (gastoAtual / meta) * 100;
   const pctAnterior = (gastoAnterior / meta) * 100;
 
+  // Label de mes para mostrar no toast (ex: "jun" ou "jul")
+  const nomesAbrev = ['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const [a, m] = mesFiscal.split('-').map(Number);
+  const mesLabel = `${nomesAbrev[m]}/${String(a).slice(2)}`;
+
   // Detectar transicao de limiares
   if (pctAnterior < LIMIARES.vermelho && pctAtual >= LIMIARES.vermelho) {
     const excesso = gastoAtual - meta;
     return {
       nivel: 'alarm',
-      msg: `${CAT_LABEL[cat] || cat}: ESTOUROU em ${fmt(excesso)}`,
+      msg: `${CAT_LABEL[cat] || cat} ${mesLabel}: ESTOUROU em ${fmt(excesso)}`,
     };
   }
   if (pctAnterior < LIMIARES.amarelo && pctAtual >= LIMIARES.amarelo) {
     return {
       nivel: 'warn',
-      msg: `${CAT_LABEL[cat] || cat}: ${pctAtual.toFixed(0)}% da meta (${fmt(gastoAtual)} de ${fmt(meta)})`,
+      msg: `${CAT_LABEL[cat] || cat} ${mesLabel}: ${pctAtual.toFixed(0)}% (${fmt(gastoAtual)} de ${fmt(meta)})`,
     };
   }
   // Ja estava em alerta, continua somando
   if (pctAtual >= LIMIARES.vermelho) {
     return {
       nivel: 'alarm',
-      msg: `${CAT_LABEL[cat] || cat}: ${fmt(gastoAtual - meta)} acima da meta`,
+      msg: `${CAT_LABEL[cat] || cat} ${mesLabel}: ${fmt(gastoAtual - meta)} acima da meta`,
     };
   }
   return null;
@@ -1154,6 +1450,215 @@ function abrirEdicaoMetas() {
     bg.classList.remove('show');
     renderStatus();
     toast('Metas atualizadas', 'success');
+  });
+}
+
+
+// =============== IA ===============
+const IA_HISTORICO_MOBILE = [];
+let iaProcessandoMobile = false;
+let iaStatusOnline = false;
+
+function iaProxyUrl() {
+  const ip = (localStorage.getItem('ia_ip') || '').trim();
+  const porta = (localStorage.getItem('ia_porta') || '8001').trim();
+  if (!ip) return null;
+  return `http://${ip}:${porta}`;
+}
+
+async function iaVerificarStatusMobile() {
+  const dot = document.getElementById('ia-dot');
+  const text = document.getElementById('ia-status-text');
+  const help = document.getElementById('ia-help-mobile');
+  const cfgStatus = document.getElementById('cfg-ia-status');
+
+  const url = iaProxyUrl();
+  if (!url) {
+    dot.className = 'ia-dot offline';
+    text.textContent = 'IP nao configurado';
+    if (cfgStatus) cfgStatus.textContent = 'nao configurado';
+    if (help) help.style.display = '';
+    iaStatusOnline = false;
+    return false;
+  }
+
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 3000);
+    const resp = await fetch(url + '/health', { signal: controller.signal });
+    clearTimeout(tid);
+    if (resp.ok) {
+      const j = await resp.json();
+      dot.className = 'ia-dot online';
+      text.textContent = `online - ${j.modelo || 'sonnet'}`;
+      if (cfgStatus) cfgStatus.textContent = 'online';
+      if (help) help.style.display = 'none';
+      iaStatusOnline = true;
+      return true;
+    }
+  } catch (e) {
+    // fall through
+  }
+  dot.className = 'ia-dot offline';
+  text.textContent = `offline - ${url}`;
+  if (cfgStatus) cfgStatus.textContent = 'offline';
+  if (help) help.style.display = '';
+  iaStatusOnline = false;
+  return false;
+}
+
+function iaFmtCustoMobile(usd) {
+  const brl = (usd || 0) * 5.5;
+  if (brl < 0.01) return `R$ ${brl.toFixed(4)}`;
+  return `R$ ${brl.toFixed(3)}`;
+}
+
+function iaFormatarRespostaMobile(texto) {
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let html = esc(texto);
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  const paragrafos = html.split(/\n\s*\n/);
+  return paragrafos.map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
+}
+
+function iaRenderHistoricoMobile() {
+  const cont = document.getElementById('ia-historico-mobile');
+  if (!IA_HISTORICO_MOBILE.length && !iaProcessandoMobile) {
+    cont.innerHTML = '<div class="ia-vazio-mobile">Toque num botao acima ou escreva uma pergunta abaixo.</div>';
+    return;
+  }
+  let html = '';
+  for (const m of IA_HISTORICO_MOBILE) {
+    let rodape = '';
+    if (m.erro) {
+      rodape = `<div class="ia-msg-rodape-mobile"><span class="badge" style="background: rgba(139,46,46,0.12); color: var(--alarm);">erro</span></div>`;
+    } else {
+      const cacheBadge = m.doCache ? '<span class="badge cache">cache</span>' : '';
+      const custoBadge = m.doCache ? '' : `<span class="badge">${iaFmtCustoMobile(m.custo)}</span>`;
+      const tempoBadge = m.tempoMs ? `<span class="badge">${(m.tempoMs/1000).toFixed(1)}s</span>` : '';
+      rodape = `<div class="ia-msg-rodape-mobile">${cacheBadge}${custoBadge}${tempoBadge}</div>`;
+    }
+    const conteudo = m.erro
+      ? `<div class="ia-erro-mobile">${iaFormatarRespostaMobile(m.erro).replace(/<p>/g, '').replace(/<\/p>/g, '<br>')}</div>`
+      : `<div class="ia-msg-resposta-mobile">${iaFormatarRespostaMobile(m.resposta)}</div>`;
+    html += `<div class="ia-msg-mobile">
+      <div class="ia-msg-pergunta-mobile">${iaFormatarRespostaMobile(m.pergunta).replace(/<p>/g, '').replace(/<\/p>/g, '<br>')}</div>
+      ${conteudo}${rodape}
+    </div>`;
+  }
+  if (iaProcessandoMobile) {
+    html += `<div class="ia-pensando-mobile">Analisando seus dados...</div>`;
+  }
+  cont.innerHTML = html;
+  cont.scrollTop = cont.scrollHeight;
+}
+
+async function iaPerguntarMobile(pergunta, forcarRefresh = false) {
+  pergunta = pergunta.trim();
+  if (!pergunta || iaProcessandoMobile) return;
+  const url = iaProxyUrl();
+  if (!url) {
+    toast('Configure o IP do PC em Ajustes', 'error');
+    trocarTela('ajustes');
+    return;
+  }
+  if (!iaStatusOnline) {
+    // Tenta uma verificacao nova antes de desistir
+    const ok = await iaVerificarStatusMobile();
+    if (!ok) {
+      toast('Proxy offline - verifique se python analise_ia.py esta rodando no PC', 'error');
+      return;
+    }
+  }
+
+  iaProcessandoMobile = true;
+  document.getElementById('ia-submit-mobile').disabled = true;
+  document.getElementById('ia-pergunta-mobile').disabled = true;
+  document.querySelectorAll('.ia-quick-btn-mobile').forEach(b => b.disabled = true);
+  iaRenderHistoricoMobile();
+
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 60000); // 60s timeout
+    const resp = await fetch(url + '/analisar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pergunta, forcar_refresh: forcarRefresh }),
+      signal: controller.signal,
+    });
+    clearTimeout(tid);
+    const data = await resp.json();
+    if (!resp.ok) {
+      IA_HISTORICO_MOBILE.push({ pergunta, erro: data.erro || `Erro HTTP ${resp.status}`, ts: Date.now() });
+    } else {
+      IA_HISTORICO_MOBILE.push({
+        pergunta,
+        resposta: data.resposta,
+        custo: data.custo_usd || 0,
+        doCache: data.do_cache,
+        tempoMs: data.tempo_ms,
+        ts: Date.now(),
+      });
+    }
+  } catch (e) {
+    const msg = e.name === 'AbortError'
+      ? 'Tempo esgotado (60s). Pode ser que voce esteja fora da rede de casa.'
+      : `Nao conseguiu chamar o proxy. Verifique conexao Wi-Fi e que o PC esta ligado. Detalhe: ${e.message}`;
+    IA_HISTORICO_MOBILE.push({ pergunta, erro: msg, ts: Date.now() });
+  }
+
+  iaProcessandoMobile = false;
+  document.getElementById('ia-submit-mobile').disabled = false;
+  document.getElementById('ia-pergunta-mobile').disabled = false;
+  document.querySelectorAll('.ia-quick-btn-mobile').forEach(b => b.disabled = false);
+  document.getElementById('ia-pergunta-mobile').value = '';
+  document.getElementById('ia-forcar-refresh-mobile').checked = false;
+  iaRenderHistoricoMobile();
+  iaVerificarStatusMobile();
+}
+
+function setupIaEventos() {
+  // Botoes rapidos
+  document.querySelectorAll('.ia-quick-btn-mobile').forEach(btn => {
+    btn.addEventListener('click', () => iaPerguntarMobile(btn.dataset.pergunta));
+  });
+
+  // Submit
+  document.getElementById('ia-submit-mobile').addEventListener('click', () => {
+    const p = document.getElementById('ia-pergunta-mobile').value;
+    const fr = document.getElementById('ia-forcar-refresh-mobile').checked;
+    iaPerguntarMobile(p, fr);
+  });
+
+  // Reload
+  document.getElementById('ia-reload-btn').addEventListener('click', () => {
+    document.getElementById('ia-status-text').textContent = 'verificando...';
+    iaVerificarStatusMobile();
+  });
+
+  // Carrega valores salvos em Ajustes
+  const ip = localStorage.getItem('ia_ip') || '';
+  const porta = localStorage.getItem('ia_porta') || '8001';
+  document.getElementById('cfg-ia-ip').value = ip;
+  document.getElementById('cfg-ia-porta').value = porta;
+
+  // Salvar e testar
+  document.getElementById('btn-testar-ia').addEventListener('click', async () => {
+    const ip = document.getElementById('cfg-ia-ip').value.trim();
+    const porta = document.getElementById('cfg-ia-porta').value.trim() || '8001';
+    if (!ip || !/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) {
+      toast('Digite um IP valido (ex: 192.168.0.105)', 'error');
+      return;
+    }
+    localStorage.setItem('ia_ip', ip);
+    localStorage.setItem('ia_porta', porta);
+    document.getElementById('cfg-ia-status').textContent = 'testando...';
+    const ok = await iaVerificarStatusMobile();
+    if (ok) {
+      toast('Conectado!', 'success');
+    } else {
+      toast('Nao conectou - verifique IP e que o proxy esta rodando', 'error');
+    }
   });
 }
 
